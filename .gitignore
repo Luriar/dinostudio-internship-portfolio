@@ -1,0 +1,11 @@
+*.key
+*.pem
+.env
+.env.*
+*.xlsx
+*.json
+*.db
+*.sql
+*.pdf
+*.png
+*.zip
