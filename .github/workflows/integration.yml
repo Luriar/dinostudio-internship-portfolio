@@ -1,0 +1,44 @@
+name: Synthetic integration
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: dinostudio-internship-portfolio
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch the audited public demo revisions
+        run: |
+          set -eu
+          git init -q dm-workflow-optimization-demo
+          git -C dm-workflow-optimization-demo fetch --depth 1 https://github.com/Luriar/dm-workflow-optimization-demo.git 84471c3d751040a60fbf987a2fb32345656ec9e1
+          git -C dm-workflow-optimization-demo checkout --detach FETCH_HEAD
+          git init -q seller-discovery-asf-demo
+          git -C seller-discovery-asf-demo fetch --depth 1 https://github.com/Luriar/seller-discovery-asf-demo.git dc280492cc71ef1cc0a33c1744fdfeb7b243fc52
+          git -C seller-discovery-asf-demo checkout --detach FETCH_HEAD
+          git init -q seller-history-collector-demo
+          git -C seller-history-collector-demo fetch --depth 1 https://github.com/Luriar/seller-history-collector-demo.git 1613db8f1baa409fde327e856914b6e7a4ba8fbc
+          git -C seller-history-collector-demo checkout --detach FETCH_HEAD
+          git init -q mysql-campaign-operations-demo
+          git -C mysql-campaign-operations-demo fetch --depth 1 https://github.com/Luriar/mysql-campaign-operations-demo.git 74544ff200b859f8e0e0be5050de3bdb89242820
+          git -C mysql-campaign-operations-demo checkout --detach FETCH_HEAD
+          git init -q threads-workflow-automation-demo
+          git -C threads-workflow-automation-demo fetch --depth 1 https://github.com/Luriar/threads-workflow-automation-demo.git 5a7e5c6d471c18ce2b4fc09c1874e072146fc443
+          git -C threads-workflow-automation-demo checkout --detach FETCH_HEAD
+          git init -q vling-youtube-pipeline-demo
+          git -C vling-youtube-pipeline-demo fetch --depth 1 https://github.com/Luriar/vling-youtube-pipeline-demo.git 596deb24c918dbe11c32035af7364be91d71abda
+          git -C vling-youtube-pipeline-demo checkout --detach FETCH_HEAD
+      - name: Install Flask for the local demo
+        run: python -m pip install -r vling-youtube-pipeline-demo/requirements.txt
+      - name: Execute synthetic integration
+        run: python dinostudio-internship-portfolio/run_integration.py --repos-root .
